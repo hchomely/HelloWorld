@@ -1,2 +1,5 @@
-# HellabcoWorld
-# test git 
+# 电子人情簿
+
+完整开发文档请查看：
+
+- [`开发文档.md`](开发文档.md)
