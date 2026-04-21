@@ -259,6 +259,11 @@ textarea {
 
 .list-toolbar {
   margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .stats {

@@ -18,6 +18,7 @@ let currentPage = clampPage(1, records.length)
 let editingId: string | null = null
 let themeTitle = loadThemeTitle() || '电子人情簿'
 let lastLoggedThemeTitle = themeTitle
+let amountDisplayMode: 'traditional' | 'arabic' = 'traditional'
 
 function mount(): void {
   const root = document.querySelector<HTMLDivElement>('#app')
@@ -77,6 +78,7 @@ function mount(): void {
               <span class="sep">·</span>
               <span>全部礼金 <strong id="stat-all-total">¥0.00</strong></span>
             </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-amount-mode">礼金显示：大写</button>
           </div>
           <div id="table-flip" class="table-flip" data-dir="">
             <div id="record-wrap" class="record-wrap">
@@ -119,6 +121,7 @@ function bind(root: HTMLDivElement): void {
   const listEl = root.querySelector<HTMLDivElement>('#ledger-list')!
   const flipEl = root.querySelector<HTMLDivElement>('#table-flip')!
   const emptyHint = root.querySelector<HTMLParagraphElement>('#empty-hint')!
+  const toggleAmountBtn = root.querySelector<HTMLButtonElement>('#btn-toggle-amount-mode')!
   let themeLogTimer: number | null = null
 
   const setEditMode = (id: string | null): void => {
@@ -133,6 +136,19 @@ function bind(root: HTMLDivElement): void {
       clearBtn.textContent = '清空表单'
     }
   }
+
+  const updateAmountModeButton = (): void => {
+    toggleAmountBtn.textContent =
+      amountDisplayMode === 'traditional' ? '礼金显示：大写' : '礼金显示：数字'
+  }
+  updateAmountModeButton()
+
+  toggleAmountBtn.addEventListener('click', () => {
+    amountDisplayMode = amountDisplayMode === 'traditional' ? 'arabic' : 'traditional'
+    updateAmountModeButton()
+    render()
+    triggerFlip(flipEl, 'next')
+  })
 
   const flushThemeLog = (): void => {
     if (themeTitle === lastLoggedThemeTitle) return
@@ -451,7 +467,8 @@ function render(): void {
     name.textContent = r.name
     const amount = document.createElement('p')
     amount.className = 'record-value'
-    amount.textContent = formatAmount(r.amount)
+    amount.textContent =
+      amountDisplayMode === 'traditional' ? formatAmount(r.amount) : formatAmountArabic(r.amount)
 
     const memo = document.createElement('p')
     memo.className = 'record-value'
